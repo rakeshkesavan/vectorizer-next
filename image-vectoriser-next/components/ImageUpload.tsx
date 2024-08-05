@@ -7,11 +7,14 @@ import axios from 'axios';
 import {Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './ui/card';  // Adjust the path if necessary
 import {Input} from "./ui/input";
 import {Button} from "./ui/button";
+import { Progress } from './ui/progress'; // Import the Progress component
 
 
 const ImageUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -30,6 +33,12 @@ const ImageUpload: React.FC = () => {
       const response = await axios.post('/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(progress);
+          }
         },
       });
       console.log('Response:', response.data);
@@ -51,6 +60,11 @@ const ImageUpload: React.FC = () => {
           {preview && <img src={preview} alt="preview" className="mb-4 w-full h-auto" />}
           <Button type="submit">Upload Image</Button>
         </form>
+        {uploadProgress > 0 && (
+            <div className="mt-4">
+              <Progress value={uploadProgress} max={100} />
+            </div>
+          )}
       </CardContent>
       <CardFooter>
         <p>Click the button to upload the selected image.</p>
