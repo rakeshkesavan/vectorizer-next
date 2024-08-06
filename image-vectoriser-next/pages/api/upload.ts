@@ -1,4 +1,3 @@
-// pages/api/upload.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
 import { vectorize, ColorMode, Hierarchical, PathSimplifyMode } from '@neplex/vectorizer';
@@ -7,7 +6,7 @@ import { readFile, writeFile } from 'fs/promises';
 
 const upload = multer({ dest: 'uploads/' });
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest & { file: Express.Multer.File }, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
       await new Promise((resolve, reject) => {
@@ -22,19 +21,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ message: 'No file uploaded' });
       }
 
+      const {
+        colorPrecision = '6',
+        filterSpeckle = '4',
+        spliceThreshold = '45',
+        cornerThreshold = '60',
+        layerDifference = '5',
+        lengthThreshold = '5',
+        maxIterations = '2',
+        pathPrecision = '5',
+      } = req.body;
+
       const imageBuffer = await readFile(imagePath);
       const svg = await vectorize(imageBuffer, {
         colorMode: ColorMode.Color,
-        colorPrecision: 6,
-        filterSpeckle: 4,
-        spliceThreshold: 45,
-        cornerThreshold: 60,
+        colorPrecision: parseInt(colorPrecision, 10),
+        filterSpeckle: parseInt(filterSpeckle, 10),
+        spliceThreshold: parseInt(spliceThreshold, 10),
+        cornerThreshold: parseInt(cornerThreshold, 10),
         hierarchical: Hierarchical.Stacked,
         mode: PathSimplifyMode.Spline,
-        layerDifference: 5,
-        lengthThreshold: 5,
-        maxIterations: 2,
-        pathPrecision: 5,
+        layerDifference: parseInt(layerDifference, 10),
+        lengthThreshold: parseInt(lengthThreshold, 10),
+        maxIterations: parseInt(maxIterations, 10),
+        pathPrecision: parseInt(pathPrecision, 10),
       });
 
       const vectorPath = path.join('uploads', `${path.basename(imagePath, path.extname(imagePath))}.svg`);
