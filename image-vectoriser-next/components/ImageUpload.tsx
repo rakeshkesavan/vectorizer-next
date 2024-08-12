@@ -1,19 +1,22 @@
-// components/ImageUpload.tsx
 'use client';
 
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-// import { Input, Button } from '@shadcn/ui';
-import {Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './ui/card';  // Adjust the path if necessary
-import {Input} from "./ui/input";
-import {Button} from "./ui/button";
-import { Progress } from './ui/progress'; // Import the Progress component
-
+import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './ui/card';
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Progress } from './ui/progress'; 
+import Header from './Header';
 
 const ImageUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [vectorPreview, setVectorPreview] = useState<string>('');
+  const [isVectorImage, setIsVectorImage] = useState<boolean>(false); // Track which image is displayed
+
 
   const [colorPrecision, setColorPrecision] = useState<number>(6);
   const [filterSpeckle, setFilterSpeckle] = useState<number>(4);
@@ -24,16 +27,27 @@ const ImageUpload: React.FC = () => {
   const [maxIterations, setMaxIterations] = useState<number>(2);
   const [pathPrecision, setPathPrecision] = useState<number>(5);
 
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
     setFile(selectedFile);
     setPreview(selectedFile ? URL.createObjectURL(selectedFile) : '');
+    setSuccessMessage(''); // Clear success message on new file selection
+    setIsVectorImage(false); // Reset to original image on new file selection
+
+  };
+
+  const handleImageClick = () => {
+    if (vectorPreview) {
+      setIsVectorImage(!isVectorImage); // Toggle between original and vector image
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!file) return;
+
+    setUploading(true);
+    setUploadProgress(0);
 
     const formData = new FormData();
     formData.append('image', file);
@@ -59,27 +73,22 @@ const ImageUpload: React.FC = () => {
         },
       });
 
-      const vectorizeConfig = {
-        colorMode: ColorMode.Color,
-        colorPrecision,
-        filterSpeckle,
-        spliceThreshold,
-        cornerThreshold,
-        hierarchical: Hierarchical.Stacked,
-        mode: PathSimplifyMode.Spline,
-        layerDifference,
-        lengthThreshold,
-        maxIterations,
-        pathPrecision,
-      };
+      if (response.status === 200) {
+        setVectorPreview(response.data.vectorPath); // Set vector image preview
 
-      console.log('Response:', response.data);
+        setSuccessMessage('Image uploaded and vectorized successfully');
+      }
+
     } catch (error) {
       console.error('Error uploading image:', error);
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
+    <div>
+    <Header />
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="grid grid-cols-2 gap-4">
         <Card className="w-full max-w-md">
@@ -90,13 +99,23 @@ const ImageUpload: React.FC = () => {
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Input type="file" accept="image/*" onChange={handleFileChange} className="mb-4" />
-              {preview && <img src={preview} alt="preview" className="mb-4 w-full h-auto" />}
-              <Button type="submit">Upload Image</Button>
+              {preview && (
+                <img
+                  src={isVectorImage ? vectorPreview : preview}
+                  alt="preview"
+                  className="mb-4 w-full h-auto cursor-pointer"
+                  onClick={handleImageClick} // Toggle image on click
+                />
+              )}
+              <Button type="submit" disabled={uploading}>Upload Image</Button>
             </form>
-            {uploadProgress > 0 && (
+            {uploading && uploadProgress > 0 && (
               <div className="mt-4">
                 <Progress value={uploadProgress} max={100} />
               </div>
+            )}
+            {successMessage && (
+              <p className="mt-4 text-green-500">{successMessage}</p>
             )}
           </CardContent>
           <CardFooter>
@@ -171,6 +190,7 @@ const ImageUpload: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+    </div>
     </div>
   );
 };

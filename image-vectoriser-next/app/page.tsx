@@ -5,7 +5,6 @@ import ImageUpload from '../components/ImageUpload';
 export default function Home() {
   return (
     <div className="App">
-      <h1>Image Uploader</h1>
       <ImageUpload />
     </div>
   );

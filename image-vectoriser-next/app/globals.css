@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Ultra&display=swap');
+
+.font-ultra {
+    font-family: 'Ultra', serif;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.font-thin {
+    font-weight: 100;
+}
+
 
 @layer base {
   :root {

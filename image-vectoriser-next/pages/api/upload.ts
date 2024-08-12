@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
-import { vectorize, ColorMode, Hierarchical, PathSimplifyMode } from '@neplex/vectorizer';
+//import { vectorize, ColorMode, Hierarchical, PathSimplifyMode } from '@neplex/vectorizer';
+import { vectorizeImage, VectorizeOptions, ColorMode, Hierarchical, PathSimplifyMode } from '@/lib/vectorizerWrapper';
 import path from 'path';
 import { readFile, writeFile } from 'fs/promises';
 
@@ -33,20 +34,23 @@ const handler = async (req: NextApiRequest & { file: Express.Multer.File }, res:
       } = req.body;
 
       const imageBuffer = await readFile(imagePath);
-      const svg = await vectorize(imageBuffer, {
+
+      const vectorizeConfig: VectorizeOptions = {
         colorMode: ColorMode.Color,
-        colorPrecision: parseInt(colorPrecision, 10),
-        filterSpeckle: parseInt(filterSpeckle, 10),
-        spliceThreshold: parseInt(spliceThreshold, 10),
-        cornerThreshold: parseInt(cornerThreshold, 10),
+        colorPrecision: parseInt(req.body.colorPrecision, 10),
+        filterSpeckle: parseInt(req.body.filterSpeckle, 10),
+        spliceThreshold: parseInt(req.body.spliceThreshold, 10),
+        cornerThreshold: parseInt(req.body.cornerThreshold, 10),
         hierarchical: Hierarchical.Stacked,
         mode: PathSimplifyMode.Spline,
-        layerDifference: parseInt(layerDifference, 10),
-        lengthThreshold: parseInt(lengthThreshold, 10),
-        maxIterations: parseInt(maxIterations, 10),
-        pathPrecision: parseInt(pathPrecision, 10),
-      });
+        layerDifference: parseInt(req.body.layerDifference, 10),
+        lengthThreshold: parseInt(req.body.lengthThreshold, 10),
+        maxIterations: parseInt(req.body.maxIterations, 10),
+        pathPrecision: parseInt(req.body.pathPrecision, 10),
+      };
 
+      const svg = await vectorizeImage(imageBuffer, vectorizeConfig);
+      
       const vectorPath = path.join('uploads', `${path.basename(imagePath, path.extname(imagePath))}.svg`);
       await writeFile(vectorPath, svg);
 

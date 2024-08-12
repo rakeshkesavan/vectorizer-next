@@ -9,28 +9,28 @@ import { describe, it, expect, vi, afterAll } from 'vitest';
 
 // Mocking multer
 vi.mock('multer', () => {
-  const multer = () => {
     return {
-        default: () => ({}),
-      single: () => (req: any, res: any, next: any) => {
-        req.file = {
-          path: 'uploads/test-image.png',
-          originalname: 'test-image.png',
-          mimetype: 'image/png',
-          size: 1024,
-          buffer: Buffer.from('test image data'),
-          stream: new Readable(),
-          destination: 'uploads/',
-          filename: 'test-image.png',
-          fieldname: 'image',
+      default: () => {
+        return {
+          single: () => (req: any, res: any, next: any) => {
+            req.file = {
+              path: 'uploads/test-image.png',
+              originalname: 'test-image.png',
+              mimetype: 'image/png',
+              size: 1024,
+              buffer: Buffer.from('test image data'),
+              stream: new Readable(),
+              destination: 'uploads/',
+              filename: 'test-image.png',
+              fieldname: 'image',
+            };
+            next();
+          },
         };
-        next();
       },
+      diskStorage: vi.fn(),
     };
-  };
-  multer.diskStorage = vi.fn();
-  return multer;
-});
+  });
 
 // Mocking fs/promises
 vi.mock('fs/promises', () => ({
