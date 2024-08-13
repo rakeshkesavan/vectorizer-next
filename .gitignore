@@ -3,3 +3,4 @@ image-vectoriser-next/node_modules
 media-server/node_modules
 image-upload-client
 image-vectoriser-next/.next
+image-vectoriser-next/.env.local

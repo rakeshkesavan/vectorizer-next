@@ -6,6 +6,7 @@ import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Progress } from './ui/progress'; 
+import { Badge } from './ui/badge';
 import Header from './Header';
 
 const ImageUpload: React.FC = () => {
@@ -38,7 +39,7 @@ const ImageUpload: React.FC = () => {
 
   const handleImageClick = () => {
     if (vectorPreview) {
-      setIsVectorImage(!isVectorImage); // Toggle between original and vector image
+      setIsVectorImage((prev) => !prev); // Toggle between original and vector image
     }
   };
 
@@ -74,7 +75,7 @@ const ImageUpload: React.FC = () => {
       });
 
       if (response.status === 200) {
-        setVectorPreview(response.data.vectorPath); // Set vector image preview
+        setVectorPreview(response.data.url); // Set vector image preview
 
         setSuccessMessage('Image uploaded and vectorized successfully');
       }
@@ -100,18 +101,30 @@ const ImageUpload: React.FC = () => {
             <form onSubmit={handleSubmit}>
               <Input type="file" accept="image/*" onChange={handleFileChange} className="mb-4" />
               {preview && (
+                <div className="relative">
                 <img
                   src={isVectorImage ? vectorPreview : preview}
                   alt="preview"
                   className="mb-4 w-full h-auto cursor-pointer"
                   onClick={handleImageClick} // Toggle image on click
                 />
+                <Badge className="absolute top-2 left-2">
+                {isVectorImage ? 'Vectorized' : 'Original'}
+              </Badge>
+              </div>
               )}
-              <Button type="submit" disabled={uploading}>Upload Image</Button>
+              <Button type="submit" disabled={uploading || !file}>Upload Image</Button>
             </form>
             {uploading && uploadProgress > 0 && (
               <div className="mt-4">
-                <Progress value={uploadProgress} max={100} />
+                {/* <Progress value={uploadProgress} max={100} /> */}
+                <Progress className="h-4 bg-gray-300 rounded" value={uploadProgress} max={100}>
+                    <div
+                      className="h-full bg-blue-500 rounded diagonal-stripes"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </Progress>
+
               </div>
             )}
             {successMessage && (

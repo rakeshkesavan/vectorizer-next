@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
 //import { vectorize, ColorMode, Hierarchical, PathSimplifyMode } from '@neplex/vectorizer';
 import { vectorizeImage, VectorizeOptions, ColorMode, Hierarchical, PathSimplifyMode } from '@/lib/vectorizerWrapper';
+import { uploadImage } from '@/lib/cloudinaryWrapper'; // Use the abstracted Cloudinary wrapper
 import path from 'path';
 import { readFile, writeFile } from 'fs/promises';
 
@@ -54,7 +55,13 @@ const handler = async (req: NextApiRequest & { file: Express.Multer.File }, res:
       const vectorPath = path.join('uploads', `${path.basename(imagePath, path.extname(imagePath))}.svg`);
       await writeFile(vectorPath, svg);
 
-      res.status(200).json({ message: 'Image uploaded and vectorized successfully', vectorPath });
+       // Upload vector image to Cloudinary and remove from local storage
+       const cloudinaryUrl = await uploadImage(vectorPath);
+      //  await unlink(vectorPath); // Clean up local file after uploading
+ 
+       res.status(200).json({ message: 'Image uploaded and vectorized successfully', url: cloudinaryUrl });
+
+      // res.status(200).json({ message: 'Image uploaded and vectorized successfully', vectorPath });
     } catch (error) {
       console.error('Error processing image:', error);
       res.status(500).json({ message: 'Failed to process image' });
