@@ -130,6 +130,17 @@ const ImageUpload: React.FC = () => {
             {successMessage && (
               <p className="mt-4 text-green-500">{successMessage}</p>
             )}
+            {isVectorImage && vectorPreview && (
+                <div className="mt-4">
+                <a 
+                  href={vectorPreview} 
+                  download="vectorized-image.svg"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Download SVG
+                </a>
+              </div>
+              )}
           </CardContent>
           <CardFooter>
             <p>Click the button to upload the selected image.</p>
