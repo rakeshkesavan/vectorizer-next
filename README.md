@@ -31,17 +31,17 @@ NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
  ```bash
 npm run dev
 
+5. Usage
+**Upload an Image**: Click on the "Upload Image" button and select an image file from your device.
+**Adjust Vectorization Settings**: Customize settings like color precision, filter speckle, and more.
+**Vectorize and Preview**: Submit the form to vectorize the image. Use the before/after slider to compare the original and vectorized images.
+**Download the SVG**: If satisfied with the result, click the "Download SVG" button to save the vectorized image.
 
-Usage
-Upload an Image: Click on the "Upload Image" button and select an image file from your device.
-Adjust Vectorization Settings: Customize settings like color precision, filter speckle, and more.
-Vectorize and Preview: Submit the form to vectorize the image. Use the before/after slider to compare the original and vectorized images.
-Download the SVG: If satisfied with the result, click the "Download SVG" button to save the vectorized image.
-Technologies Used
-Next.js: React framework for server-side rendering and static site generation.
-Tailwind CSS: Utility-first CSS framework for styling.
-ShadCN: UI components for a consistent and polished interface.
-Multer: Middleware for handling multipart/form-data, used for uploading files.
-@neplex/vectorizer: Library for converting raster images to vector format.
-Cloudinary: CDN for storing and serving the vectorized images.
+6. Technologies Used
+**Next.js**: React framework for server-side rendering and static site generation.
+**Tailwind CSS**: Utility-first CSS framework for styling.
+**ShadCN**: UI components for a consistent and polished interface.
+**Multer**: Middleware for handling multipart/form-data, used for uploading files.
+**@neplex/vectorizer**: Library for converting raster images to vector format.
+**Cloudinary**: CDN for storing and serving the vectorized images.
 
