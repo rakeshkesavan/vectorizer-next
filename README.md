@@ -17,6 +17,7 @@ This project is a web-based application that allows users to upload images, conv
    ```bash
    git clone https://github.com/yourusername/image-vectorization-tool.git
    cd image-vectorization-tool
+   ```
 
 2. Install the dependencies:
  ```bash
