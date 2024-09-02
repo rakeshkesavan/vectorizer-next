@@ -8,6 +8,8 @@ import { Button } from "./ui/button";
 import { Progress } from './ui/progress'; 
 import { Badge } from './ui/badge';
 import Header from './Header';
+import ReactBeforeSliderComponent from 'react-before-after-slider-component';
+import 'react-before-after-slider-component/dist/build.css';
 
 const ImageUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -100,18 +102,12 @@ const ImageUpload: React.FC = () => {
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Input type="file" accept="image/*" onChange={handleFileChange} className="mb-4" />
-              {preview && (
-                <div className="relative">
-                <img
-                  src={isVectorImage ? vectorPreview : preview}
-                  alt="preview"
-                  className="mb-4 w-full h-auto cursor-pointer"
-                  onClick={handleImageClick} // Toggle image on click
+              {preview && vectorPreview && (
+                <ReactBeforeSliderComponent
+                firstImage={{ imageUrl: preview}}
+                secondImage={{ imageUrl: vectorPreview}}
+                  className="mb-4 w-full h-auto"
                 />
-                <Badge className="absolute top-2 left-2">
-                {isVectorImage ? 'Vectorized' : 'Original'}
-              </Badge>
-              </div>
               )}
               <Button type="submit" disabled={uploading || !file}>Upload Image</Button>
             </form>
